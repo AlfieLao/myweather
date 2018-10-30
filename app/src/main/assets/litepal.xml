@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
-    <dbName value ="my_weather"/>
+    <dbname value ="myweather"/>
     <version value ="1"/>
     <list>
         <mapping class ="com.example.administrator.myweather.db.Province"/>
