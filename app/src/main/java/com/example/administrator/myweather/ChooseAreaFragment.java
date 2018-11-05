@@ -1,6 +1,7 @@
 package com.example.administrator.myweather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,6 +52,8 @@ public class ChooseAreaFragment extends Fragment {
     private Province selectedProvince;
     //选中的城市
     private City selectedCity;
+    //选中的县
+    private County selectedCounty;
     //当前选中的级别
     private int currentLevel;
 
@@ -80,6 +83,14 @@ public class ChooseAreaFragment extends Fragment {
                     case LEVEL_CITY:
                         selectedCity = cityList.get(position);
                         queryCounties();
+                        break;
+                    case LEVEL_COUNTY:
+                        selectedCounty = countyList.get(position);
+                        Toast.makeText(getContext(),selectedCounty.getCountryName(),Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                        intent.putExtra("County_data",selectedCounty);
+                        startActivity(intent);
+                        getActivity().finish();
                     default:
                         break;
                 }
@@ -112,7 +123,7 @@ public class ChooseAreaFragment extends Fragment {
                     dataList.add(province.getProvinceName());
                 }
                 adapter.notifyDataSetChanged();
-                listView.setSelection(0);
+//                listView.setSelection(0);
                 currentLevel = LEVEL_PROVINCE;
             }else {
                 String address = "http://guolin.tech/api/china";
@@ -122,18 +133,6 @@ public class ChooseAreaFragment extends Fragment {
             String address = "http://guolin.tech/api/china";
             queryFromService(address,"province");
         }
-//        if (provinceList.size()>0){
-//            dataList.clear();
-//            for (Province province : provinceList){
-//                dataList.add(province.getProvinceName());
-//            }
-//            adapter.notifyDataSetChanged();
-//            listView.setSelection(0);
-//            currentLevel = LEVEL_PROVINCE;
-//        }else {
-//            String address = "http://guolin.tech/api/china";
-//            queryFromService(address,"province");
-//        }
     }
 
     /**
@@ -147,12 +146,12 @@ public class ChooseAreaFragment extends Fragment {
             if (countyList.size()>0){
                 dataList.clear();
                 for (County county: countyList){
-                    if (!county.getCountryName().equals(selectedCity.getCityName())){
+//                    if (!county.getCountryName().equals(selectedCity.getCityName())){
                         dataList.add(county.getCountryName());
-                    }
+//                    }
                 }
                 adapter.notifyDataSetChanged();
-                listView.setSelection(0);
+//                listView.setSelection(0);
                 currentLevel = LEVEL_COUNTY;
             }else {
                 int provinceCode = selectedProvince.getProvinceCode();
@@ -179,10 +178,9 @@ public class ChooseAreaFragment extends Fragment {
             if (cityList.size()>0){
                 dataList.clear();
                 for (City city: cityList){
-                    if (!city.getCityName().equals(selectedProvince.getProvinceName())){
+//                    if (!city.getCityName().equals(selectedProvince.getProvinceName())){
                         dataList.add(city.getCityName());
-                    }
-
+//                    }
                 }
                 adapter.notifyDataSetChanged();
                 listView.setSelection(0);

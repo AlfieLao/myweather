@@ -2,7 +2,9 @@ package com.example.administrator.myweather.db;
 
 import org.litepal.crud.DataSupport;
 
-public class County extends DataSupport{
+import java.io.Serializable;
+
+public class County extends DataSupport implements Serializable{
     private  int id;
     private  String countryName;
     private String weatherId;
