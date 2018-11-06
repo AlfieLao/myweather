@@ -5,10 +5,15 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,6 +48,10 @@ public class WeatherActivity extends AppCompatActivity {
     private LinearLayout forecastLayout;
     private ImageButton mButtonBack;
     private ImageView bingPicImg;
+    public DrawerLayout drawerLayout;
+    private Button button1;
+    public SwipeRefreshLayout swipeRefreshLayout;
+    private String mWeatherId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,11 +74,26 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText =(TextView) findViewById(R.id.car_wash_text);
         sportText =(TextView) findViewById(R.id.sport_text);
         mButtonBack =(ImageButton) findViewById(R.id.btn_back);
-
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh_layout);
+        drawerLayout =(DrawerLayout) findViewById(R.id.drawer_layout);
+        button1 =(Button) findViewById(R.id.choose_btn);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestWeather(mWeatherId);
+            }
+        });
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = preferences.getString("weather",null);
         if (weatherString!=null){
             Weather weather = Utility.handleWeatherResponse(weatherString);
+            mWeatherId = weather.basic.weather;
             if (((County)getIntent().getSerializableExtra("County_data")) == null){
                 showWeatherInfo(weather);
             }else if (!weather.basic.cityName.equals(((County)getIntent().getSerializableExtra("County_data")).getCountryName())){
@@ -126,7 +150,7 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
-    private void requestWeather(final String weatherId) {
+    public void requestWeather(final String weatherId) {
         String weatherUrl = "http://guolin.tech/api/weather?cityid="+weatherId+"&key=bc0418b57b2d4918819d3974ac1285d9";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
 
@@ -138,6 +162,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (weather != null && "ok".equals(weather.status)){
+                            mWeatherId = weather.basic.weather;
                             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
                             editor.putString("weather",responseText);
                             editor.apply();
@@ -149,6 +174,7 @@ public class WeatherActivity extends AppCompatActivity {
                             startActivity(intent1);
                             WeatherActivity.this.finish();
                         }
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -161,6 +187,7 @@ public class WeatherActivity extends AppCompatActivity {
                         Toast.makeText(WeatherActivity.this,"获取天气信息失败(network error)",Toast.LENGTH_LONG).show();
                         Intent intent1 = new Intent(WeatherActivity.this,MainActivity.class);
                         intent1.putExtra("from",1);
+                        swipeRefreshLayout.setRefreshing(false);
                         startActivity(intent1);
                         WeatherActivity.this.finish();
                     }

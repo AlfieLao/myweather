@@ -9,32 +9,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/holo_blue_light">
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:id="@+id/bing_pic_img"/>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/weather_layout"
+                android:scrollbars="none"
+                android:overScrollMode="never">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:fitsSystemWindows="true">
+                    <include layout="@layout/title"/>
+                    <include layout="@layout/now"/>
+                    <include layout="@layout/forecast"/>
+                    <include layout="@layout/aqi"/>
+                    <include layout="@layout/suggeston"/>
+                </LinearLayout>
+            </ScrollView>
 
-        <ScrollView
+        </android.support.v4.widget.SwipeRefreshLayout>
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/weather_layout"
-            android:scrollbars="none"
-            android:overScrollMode="never">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:fitsSystemWindows="true">
-                <include layout="@layout/title"/>
-                <include layout="@layout/now"/>
-                <include layout="@layout/forecast"/>
-                <include layout="@layout/aqi"/>
-                <include layout="@layout/suggeston"/>
-            </LinearLayout>
-        </ScrollView>
-
-
+            android:name="com.example.administrator.myweather.ChooseAreaFragment"
+            android:id="@+id/choose_area_fragment"
+            android:layout_gravity="start"/>
+        </android.support.v4.widget.DrawerLayout>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
