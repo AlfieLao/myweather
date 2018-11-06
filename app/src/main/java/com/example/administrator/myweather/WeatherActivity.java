@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.example.administrator.myweather.db.County;
 import com.example.administrator.myweather.gson.Forecast;
 import com.example.administrator.myweather.gson.Weather;
+import com.example.administrator.myweather.service.AutoUpdateService;
 import com.example.administrator.myweather.util.HttpUtil;
 import com.example.administrator.myweather.util.Utility;
 
@@ -153,7 +154,6 @@ public class WeatherActivity extends AppCompatActivity {
     public void requestWeather(final String weatherId) {
         String weatherUrl = "http://guolin.tech/api/weather?cityid="+weatherId+"&key=bc0418b57b2d4918819d3974ac1285d9";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();  //转化为Json字符串？
@@ -232,5 +232,7 @@ public class WeatherActivity extends AppCompatActivity {
         sportText.setText(sport);
 
         weatherLayout.setVisibility(View.VISIBLE);
+        Intent intent =new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 }
